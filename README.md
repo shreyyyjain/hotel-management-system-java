@@ -1,28 +1,17 @@
-# Hotel Management System (Java)
+# Hotel Management — Java (Swing) Demo
 
-A desktop based booking and billing management application built using Java with focus on modular OOP design, validation, and exception handling.
+Simple hotel management demo app written in Java 17 with a Swing GUI.
+Shows: room booking, takeaway ordering, cart/checkout flows.
 
-## Features
-- Room booking and checkout flow
-- Cart management with validation
-- Input validation and error handling using try-catch blocks
-- Availability checks and confirmation prompts
-- Modular classes (Rooms, Orders, Cart, Users)
+## Tech
+- Java 17
+- Swing UI
+- Maven build
+- JUnit 5 tests
+- GitHub Actions CI
 
-## Tech Used
-- Java
-- OOP principles
-- File-based data handling (extendable to DB)
+## Quick start
 
-## Folder Structure
-- src/ : Java source code
-
-## How to Run
-1. Install Java (JDK 8 or higher)
-2. Open project in any IDE (IntelliJ, Eclipse, NetBeans)
-3. Compile and run the main class
-
-## Possible Improvements
-- Connect to database (MySQL or PostgreSQL)
-- Add role-based authentication
-- PDF billing and invoice module
+Build:
+```bash
+mvn clean package

@@ -1,27 +1,8 @@
-# Compiled class files
+/target/
+/out/
 *.class
-
-# Package files
-*.jar
-*.war
-*.ear
-
-# IDE directories
+*.log
+.DS_Store
+*.iml
 /.idea/
 /.vscode/
-/nbproject/
-/.settings/
-/.project
-.classpath
-
-# Build directories
-/bin/
-/build/
-/out/
-
-# Logs
-*.log
-
-# OS generated
-.DS_Store
-Thumbs.db

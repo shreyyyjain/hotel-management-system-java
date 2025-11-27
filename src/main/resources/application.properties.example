@@ -1,0 +1,5 @@
+# Example application properties - copy to application.properties and edit for local usage
+app.name=Hotel Management System
+app.version=0.1.0
+admin.user=admin
+# Do not store real secrets here in git

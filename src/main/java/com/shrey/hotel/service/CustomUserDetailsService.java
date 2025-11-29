@@ -1,16 +1,16 @@
 package com.shrey.hotel.service;
 
-import com.shrey.hotel.model.User;
-import com.shrey.hotel.repository.UserRepository;
+import java.util.List;
+
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
+import com.shrey.hotel.model.User;
+import com.shrey.hotel.repository.UserRepository;
 
-@Service
+// Legacy duplicate retained only for historical reference; not a Spring bean.
 public class CustomUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
 

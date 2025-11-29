@@ -29,6 +29,11 @@ public class CartService {
 
     public CartDTO addRoomToCart(String sessionId, Long roomId) {
         CartDTO cart = getCart(sessionId);
+        // Count unique items: each room counts as 1, each food type counts as 1
+        int totalUniqueItems = cart.getRoomIds().size() + cart.getFoodItems().keySet().size();
+        if (totalUniqueItems >= 10 && !cart.getRoomIds().contains(roomId)) {
+            throw new IllegalStateException("Cart cannot exceed 10 unique items");
+        }
         if (!cart.getRoomIds().contains(roomId)) {
             cart.getRoomIds().add(roomId);
         }
@@ -38,7 +43,18 @@ public class CartService {
     }
 
     public CartDTO addFoodToCart(String sessionId, Long foodItemId, int quantity) {
+        if (quantity < 0) {
+            throw new IllegalArgumentException("Quantity must be non-negative");
+        }
+        if (quantity > 20) {
+            quantity = 20; // simple cap to prevent unrealistic orders
+        }
         CartDTO cart = getCart(sessionId);
+        // Count unique items: each room counts as 1, each food type counts as 1
+        int totalUniqueItems = cart.getRoomIds().size() + cart.getFoodItems().keySet().size();
+        if (totalUniqueItems >= 10 && !cart.getFoodItems().containsKey(foodItemId)) {
+            throw new IllegalStateException("Cart cannot exceed 10 unique items");
+        }
         cart.getFoodItems().put(foodItemId, quantity);
         recalculateTotal(cart);
         carts.put(sessionId, cart);

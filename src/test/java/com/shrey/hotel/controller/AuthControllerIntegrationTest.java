@@ -24,6 +24,7 @@ public class AuthControllerIntegrationTest extends BaseIntegrationTest {
     private ObjectMapper objectMapper;
 
     @Test
+    @SuppressWarnings({"unchecked", "null"})
     void signup_then_login_then_refresh_flow_succeeds() throws Exception {
         String email = "test" + UUID.randomUUID() + "@example.com";
         String password = "Password123!";
@@ -68,7 +69,8 @@ public class AuthControllerIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    void login_withInvalidCredentials_returns401() throws Exception {
+    @SuppressWarnings("null")
+    void login_invalidCredentials_returns401() throws Exception {
         mockMvc.perform(post("/auth/login")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(Map.of(

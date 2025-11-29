@@ -30,6 +30,8 @@ import java.util.TreeMap;
 import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -479,24 +481,24 @@ public class ModernLoginSignupGUI {
     private JPanel createWelcomeCard() {
         JPanel card = createStyledCard();
         card.setLayout(new BorderLayout());
-        card.setBorder(new EmptyBorder(25, 25, 25, 25));
+        card.setBorder(new EmptyBorder(30, 30, 30, 30));
 
         JLabel welcome = new JLabel("Welcome back, " + (currentUser != null ? currentUser.getUsername() : "Guest") + "!");
         welcome.setFont(new Font("Segoe UI", Font.BOLD, 28));
         welcome.setForeground(DARK_TEXT);
+        welcome.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel subtitle = new JLabel("Discover luxury, comfort, and unforgettable experiences");
         subtitle.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         subtitle.setForeground(LIGHT_TEXT);
+        subtitle.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JPanel textPanel = new JPanel(new GridBagLayout());
+        JPanel textPanel = new JPanel();
+        textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
         textPanel.setOpaque(false);
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridy = 0;
-        textPanel.add(welcome, gbc);
-        gbc.gridy = 1;
-        gbc.insets = new Insets(10, 0, 0, 0);
-        textPanel.add(subtitle, gbc);
+        textPanel.add(welcome);
+        textPanel.add(Box.createVerticalStrut(12));
+        textPanel.add(subtitle);
 
         card.add(textPanel, BorderLayout.WEST);
         return card;
@@ -586,6 +588,7 @@ public class ModernLoginSignupGUI {
         JPanel card = createStyledCard();
         card.setLayout(new GridBagLayout());
         card.setBorder(new EmptyBorder(20, 20, 20, 20));
+        card.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -629,7 +632,8 @@ public class ModernLoginSignupGUI {
         gbc.insets = new Insets(10, 0, 0, 0);
         JButton bookBtn = createModernButton("Book Now", room.isAvailable() ? PRIMARY : new Color(189, 195, 199));
         bookBtn.setEnabled(room.isAvailable() && currentUser != null);
-        bookBtn.addActionListener(e -> {
+        
+        Runnable bookAction = () -> {
             if (currentUser == null) {
                 showErrorDialog("Login Required", "Please login to book a room.");
                 return;
@@ -637,11 +641,36 @@ public class ModernLoginSignupGUI {
             if (bookingService.bookRoom(room.getRoomNumber())) {
                 cart.addRoom(room);
                 showSuccessDialog("Room Booked", "Room " + room.getRoomNumber() + " added to cart!");
+                refreshCartDisplay();
             } else {
                 showErrorDialog("Booking Failed", "This room is no longer available.");
             }
+        };
+        
+        // Add action listener
+        bookBtn.addActionListener(e -> bookAction.run());
+        
+        // Add mouse listener as backup for event propagation issues
+        bookBtn.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (bookBtn.isEnabled()) {
+                    bookAction.run();
+                }
+            }
+        });
+        
+        // Add card-level click handler
+        card.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (room.isAvailable() && currentUser != null) {
+                    bookAction.run();
+                }
+            }
         });
 
+        card.add(bookBtn, gbc);
         return card;
     }
 
@@ -657,43 +686,48 @@ public class ModernLoginSignupGUI {
             cuisineMap.computeIfAbsent(item.getCuisine(), k -> new ArrayList<>()).add(item);
         }
 
-        JPanel foodContent = new JPanel(new GridBagLayout());
+        // Use BoxLayout for vertical stacking to prevent collapse
+        JPanel foodContent = new JPanel();
+        foodContent.setLayout(new BoxLayout(foodContent, BoxLayout.Y_AXIS));
         foodContent.setBackground(BG_SECONDARY);
         foodContent.setBorder(new EmptyBorder(20, 30, 20, 30));
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1;
-        gbc.gridwidth = GridBagConstraints.REMAINDER;
-        gbc.gridy = 0;
-
         for (Map.Entry<String, List<TakeawayItem>> entry : cuisineMap.entrySet()) {
+            // Cuisine label
             JLabel cuisineLabel = new JLabel(entry.getKey() + " Cuisine");
             cuisineLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
             cuisineLabel.setForeground(PRIMARY);
-            gbc.insets = new Insets(20, 0, 15, 0);
-            foodContent.add(cuisineLabel, gbc);
+            cuisineLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+            cuisineLabel.setBorder(new EmptyBorder(20, 0, 15, 0));
+            foodContent.add(cuisineLabel);
 
-            JPanel itemsPanel = new JPanel(new GridLayout(0, 3, 20, 20));
-            itemsPanel.setBackground(BG_SECONDARY);
-            gbc.gridy++;
-            gbc.insets = new Insets(0, 0, 20, 0);
+            // Items grid in wrapper to control layout
+            JPanel itemsWrapper = new JPanel();
+            itemsWrapper.setLayout(new GridLayout(0, 3, 20, 20));
+            itemsWrapper.setBackground(BG_SECONDARY);
+            itemsWrapper.setMaximumSize(new Dimension(Integer.MAX_VALUE, 400));
+            itemsWrapper.setAlignmentX(Component.LEFT_ALIGNMENT);
 
             for (TakeawayItem item : entry.getValue()) {
-                itemsPanel.add(createFoodCard(item));
+                itemsWrapper.add(createFoodCard(item));
             }
-
-            gbc.gridy++;
-            foodContent.add(itemsPanel, gbc);
+            foodContent.add(itemsWrapper);
+            
+            // Add spacing between sections
+            JPanel spacer = new JPanel();
+            spacer.setOpaque(false);
+            spacer.setMaximumSize(new Dimension(Integer.MAX_VALUE, 20));
+            foodContent.add(spacer);
         }
 
-        gbc.gridy++;
-        gbc.weighty = 1;
-        foodContent.add(new JLabel(), gbc);
+        // Add vertical glue to push content to top
+        foodContent.add(Box.createVerticalGlue());
 
         JScrollPane scroll = new JScrollPane(foodContent);
         scroll.setBackground(BG_SECONDARY);
+        scroll.getViewport().setBackground(BG_SECONDARY);
         root.add(scroll, BorderLayout.CENTER);
+        
         // Floating cart button
         addFloatingCartButton(root);
         return root;
@@ -850,13 +884,8 @@ public class ModernLoginSignupGUI {
             }
         }
 
-        // Food items
-        Map<String, Integer> foodCount = new HashMap<>();
-        for (TakeawayItem t : cart.getTakeawayItems()) {
-            foodCount.put(t.getName(), foodCount.getOrDefault(t.getName(), 0) + 1);
-        }
-
-        if (!foodCount.isEmpty()) {
+        // Food items (already grouped by cart as Map<Item, Qty>)
+        if (!cart.getTakeawayItems().isEmpty()) {
             JLabel foodLabel = new JLabel("Food Items");
             foodLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
             foodLabel.setForeground(DARK_TEXT);
@@ -864,8 +893,8 @@ public class ModernLoginSignupGUI {
             igbc.insets = new Insets(20, 0, 10, 0);
             itemsCard.add(foodLabel, igbc);
 
-            for (Map.Entry<String, Integer> entry : foodCount.entrySet()) {
-                JLabel foodItem = new JLabel(entry.getValue() + "x " + entry.getKey());
+            for (Map.Entry<TakeawayItem, Integer> entry : cart.getTakeawayItems().entrySet()) {
+                JLabel foodItem = new JLabel(entry.getValue() + "x " + entry.getKey().getName());
                 foodItem.setFont(new Font("Segoe UI", Font.PLAIN, 12));
                 foodItem.setForeground(LIGHT_TEXT);
                 igbc.gridy++;
@@ -962,6 +991,8 @@ public class ModernLoginSignupGUI {
         field.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         field.setForeground(LIGHT_TEXT);
         field.setCaretColor(PRIMARY);
+        field.setPreferredSize(new Dimension(Integer.MAX_VALUE, 44));
+        field.setMinimumSize(new Dimension(200, 44));
         field.setBorder(BorderFactory.createCompoundBorder(
                 new RoundedBorder(8, new Color(220, 225, 230), 1),
                 new EmptyBorder(10, 12, 10, 12)
@@ -993,6 +1024,8 @@ public class ModernLoginSignupGUI {
         JPasswordField field = new JPasswordField();
         field.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         field.setCaretColor(PRIMARY);
+        field.setPreferredSize(new Dimension(Integer.MAX_VALUE, 44));
+        field.setMinimumSize(new Dimension(200, 44));
         field.setBorder(BorderFactory.createCompoundBorder(
                 new RoundedBorder(8, new Color(220, 225, 230), 1),
                 new EmptyBorder(10, 12, 10, 12)
@@ -1003,13 +1036,18 @@ public class ModernLoginSignupGUI {
         field.setText(placeholder);
         field.setForeground(LIGHT_TEXT);
         field.setEchoChar((char)0);
+        
+        // Use a flag to track placeholder state
+        boolean[] isPlaceholder = {true};
+        
         field.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
-                if (String.valueOf(field.getPassword()).equals(placeholder)) {
+                if (isPlaceholder[0]) {
                     field.setText("");
                     field.setForeground(DARK_TEXT);
-                    try { field.setEchoChar('•'); } catch (Exception ignored) {}
+                    field.setEchoChar('•');
+                    isPlaceholder[0] = false;
                 }
             }
 
@@ -1019,6 +1057,7 @@ public class ModernLoginSignupGUI {
                     field.setForeground(LIGHT_TEXT);
                     field.setText(placeholder);
                     field.setEchoChar((char)0);
+                    isPlaceholder[0] = true;
                 }
             }
         });
@@ -1037,18 +1076,24 @@ public class ModernLoginSignupGUI {
         btn.setPreferredSize(new Dimension(Integer.MAX_VALUE, 45));
 
         btn.addMouseListener(new MouseAdapter() {
+            private Color originalColor = color;
+            
             @Override
             public void mouseEntered(MouseEvent e) {
-                btn.setBackground(new Color(
-                        Math.max(0, color.getRed() - 20),
-                        Math.max(0, color.getGreen() - 20),
-                        Math.max(0, color.getBlue() - 20)
-                ));
+                // Darken color by 15-20%
+                Color darkened = new Color(
+                        Math.max(0, color.getRed() - 25),
+                        Math.max(0, color.getGreen() - 25),
+                        Math.max(0, color.getBlue() - 25)
+                );
+                btn.setBackground(darkened);
+                btn.setBorder(new RoundedBorder(8, darkened, 2));
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
                 btn.setBackground(color);
+                btn.setBorder(new RoundedBorder(8, color, 0));
             }
         });
 
@@ -1086,9 +1131,42 @@ public class ModernLoginSignupGUI {
 
     // Create a styled checkbox with custom appearance
     private JCheckBox createStyledCheckBox() {
-        JCheckBox cb = new JCheckBox();
+        JCheckBox cb = new JCheckBox() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g;
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                
+                int width = 20;
+                int height = 20;
+                int x = 0;
+                int y = (getHeight() - height) / 2;
+                
+                // Draw checkbox border
+                g2.setColor(new Color(200, 200, 200));
+                g2.setStroke(new BasicStroke(1.5f));
+                g2.drawRoundRect(x, y, width, height, 4, 4);
+                
+                // Draw fill if checked
+                if (this.isSelected()) {
+                    g2.setColor(PRIMARY);
+                    g2.fillRoundRect(x+1, y+1, width-2, height-2, 3, 3);
+                    
+                    // Draw checkmark
+                    g2.setColor(BG_PRIMARY);
+                    g2.setStroke(new BasicStroke(2.5f));
+                    g2.drawLine(x+5, y+10, x+8, y+13);
+                    g2.drawLine(x+8, y+13, x+15, y+6);
+                }
+            }
+        };
+        
         cb.setBackground(BG_PRIMARY);
         cb.setForeground(DARK_TEXT);
+        cb.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        cb.setBorder(new EmptyBorder(8, 0, 8, 0));
+        cb.setFocusPainted(false);
+        cb.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         return cb;
     }
 
@@ -1138,11 +1216,15 @@ public class ModernLoginSignupGUI {
         field.setCaretColor(PRIMARY);
         field.setEchoChar('•');
 
-        JButton eyeBtn = new JButton("👁");
+        JButton eyeBtn = new JButton("\uD83D\uDC41"); // Eye emoji with proper Unicode
         eyeBtn.setFocusPainted(false);
         eyeBtn.setBackground(BG_PRIMARY);
-        eyeBtn.setBorder(null);
-        eyeBtn.setFont(new Font("Arial", Font.PLAIN, 14));
+        eyeBtn.setForeground(PRIMARY);
+        eyeBtn.setBorder(BorderFactory.createCompoundBorder(
+                new RoundedBorder(4, new Color(220, 225, 230), 1),
+                new EmptyBorder(2, 4, 2, 4)
+        ));
+        eyeBtn.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 16));
         eyeBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         eyeBtn.addActionListener(e -> {
             if (field.getEchoChar() == 0) {

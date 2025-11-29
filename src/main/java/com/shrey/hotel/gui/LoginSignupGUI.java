@@ -502,10 +502,12 @@ public class LoginSignupGUI {
             items.add(Box.createRigidArea(new Dimension(0,8)));
         }
 
-        for (TakeawayItem t : cart.getTakeawayItems()) {
+        for (Map.Entry<TakeawayItem, Integer> entry : cart.getTakeawayItems().entrySet()) {
+            TakeawayItem t = entry.getKey();
+            Integer qty = entry.getValue();
             JPanel row = new JPanel(new BorderLayout());
             row.setOpaque(false);
-            JLabel l = new JLabel(t.getName() + " • Rs." + t.getPrice().toPlainString());
+            JLabel l = new JLabel(qty + "x " + t.getName() + " • Rs." + t.getPrice().toPlainString());
             JButton rem = styledButton("Remove", ev -> {
                 cart.removeTakeawayItem(t);
                 showCartDialog();

@@ -1,5 +1,12 @@
-C:\Users\shrey\Desktop\Projects\Hotel Management Backend\src\main\java\com\shrey\hotel\model\FoodItem.java
-C:\Users\shrey\Desktop\Projects\Hotel Management Backend\src\main\java\com\shrey\hotel\HotelManagementApplication.java
-C:\Users\shrey\Desktop\Projects\Hotel Management Backend\src\main\java\com\shrey\hotel\model\User.java
-C:\Users\shrey\Desktop\Projects\Hotel Management Backend\src\main\java\com\shrey\hotel\model\Booking.java
-C:\Users\shrey\Desktop\Projects\Hotel Management Backend\src\main\java\com\shrey\hotel\model\Room.java
+c:\Users\shrey\Desktop\Projects\Java\Hotel Management System\Hotel Management Backend\src\main\java\com\shrey\hotel\model\Room.java
+c:\Users\shrey\Desktop\Projects\Java\Hotel Management System\Hotel Management Backend\src\main\java\com\shrey\hotel\repository\FoodItemRepository.java
+c:\Users\shrey\Desktop\Projects\Java\Hotel Management System\Hotel Management Backend\src\main\java\com\shrey\hotel\service\AuthService.java
+c:\Users\shrey\Desktop\Projects\Java\Hotel Management System\Hotel Management Backend\src\main\java\com\shrey\hotel\HotelManagementApplication.java
+c:\Users\shrey\Desktop\Projects\Java\Hotel Management System\Hotel Management Backend\src\main\java\com\shrey\hotel\controller\AuthController.java
+c:\Users\shrey\Desktop\Projects\Java\Hotel Management System\Hotel Management Backend\src\main\java\com\shrey\hotel\model\User.java
+c:\Users\shrey\Desktop\Projects\Java\Hotel Management System\Hotel Management Backend\src\main\java\com\shrey\hotel\repository\UserRepository.java
+c:\Users\shrey\Desktop\Projects\Java\Hotel Management System\Hotel Management Backend\src\main\java\com\shrey\hotel\model\Booking.java
+c:\Users\shrey\Desktop\Projects\Java\Hotel Management System\Hotel Management Backend\src\main\java\com\shrey\hotel\repository\RoomRepository.java
+c:\Users\shrey\Desktop\Projects\Java\Hotel Management System\Hotel Management Backend\src\main\java\com\shrey\hotel\service\BookingService.java
+c:\Users\shrey\Desktop\Projects\Java\Hotel Management System\Hotel Management Backend\src\main\java\com\shrey\hotel\model\FoodItem.java
+c:\Users\shrey\Desktop\Projects\Java\Hotel Management System\Hotel Management Backend\src\main\java\com\shrey\hotel\repository\BookingRepository.java

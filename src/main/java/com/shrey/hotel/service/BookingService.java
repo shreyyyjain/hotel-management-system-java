@@ -16,7 +16,7 @@ public class BookingService {
     }
 
     public Optional<Room> findFirstAvailable() {
-        return roomRepository.findFirstAvailable();
+        return roomRepository.findFirstByAvailableTrue();
     }
 
     @Transactional

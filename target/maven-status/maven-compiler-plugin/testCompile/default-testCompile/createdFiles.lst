@@ -1,0 +1,3 @@
+com\shrey\hotel\controller\AuthControllerIntegrationTest.class
+com\shrey\hotel\BaseIntegrationTest.class
+com\shrey\hotel\security\JwtUtilTests.class
